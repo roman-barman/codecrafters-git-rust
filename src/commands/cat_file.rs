@@ -14,7 +14,7 @@ pub(crate) fn cat_file(hash: &str) {
                 OBJECT_DIR, dir_name, file_name
             )
         });
-    let start = bytes.iter().position(|&x| x == 0).unwrap();
+    let start = bytes.iter().position(|&x| x == 0).expect("Failed to find zlib header");
 
     let mut decoder = ZlibDecoder::new(&bytes[start..]);
     let mut content = String::new();
