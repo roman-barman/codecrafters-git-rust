@@ -4,18 +4,16 @@ use std::env;
 use std::fs;
 
 fn main() {
-    // You can use print statements as follows for debugging, they'll be visible when running tests.
     eprintln!("Logs from your program will appear here!");
 
-    // TODO: Uncomment the code below to pass the first stage
-    // let args: Vec<String> = env::args().collect();
-    // if args[1] == "init" {
-    //     fs::create_dir(".git").unwrap();
-    //     fs::create_dir(".git/objects").unwrap();
-    //     fs::create_dir(".git/refs").unwrap();
-    //     fs::write(".git/HEAD", "ref: refs/heads/main\n").unwrap();
-    //     println!("Initialized git directory")
-    // } else {
-    //     println!("unknown command: {}", args[1])
-    // }
+    let args: Vec<String> = env::args().collect();
+    if args[1] == "init" {
+        fs::create_dir(".git").expect("Failed to create .git");
+        fs::create_dir(".git/objects").expect("Failed to create .git/objects");
+        fs::create_dir(".git/refs").expect("Failed to create .git/refs");
+        fs::write(".git/HEAD", "ref: refs/heads/main\n").expect("Failed to write .git/HEAD");
+        println!("Initialized git directory")
+    } else {
+        println!("unknown command: {}", args[1])
+    }
 }
