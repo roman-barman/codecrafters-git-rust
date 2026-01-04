@@ -14,7 +14,9 @@ pub(crate) fn cat_file(hash: &str) {
                 OBJECT_DIR, dir_name, file_name
             )
         });
-    let mut decoder = ZlibDecoder::new(&bytes[..]);
+    let start = bytes.iter().position(|&x| x == 0).unwrap();
+
+    let mut decoder = ZlibDecoder::new(&bytes[start..]);
     let mut content = String::new();
     decoder.read_to_string(&mut content).unwrap();
 
