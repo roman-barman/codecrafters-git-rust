@@ -9,7 +9,7 @@ fn main() {
     match args[1].as_str() {
         "init" => commands::init(),
         "cat-file" => {
-            let hash = &args[2];
+            let hash = &args[3];
             commands::cat_file(hash);
         }
         _ => println!("unknown command: {}", args[1]),
