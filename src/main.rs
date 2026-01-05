@@ -1,4 +1,5 @@
 mod args;
+mod blob_object;
 mod commands;
 
 use crate::args::{AppArgs, Command};
