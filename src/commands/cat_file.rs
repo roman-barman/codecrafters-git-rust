@@ -14,11 +14,11 @@ pub(crate) fn cat_file(hash: &str) {
                 OBJECT_DIR, dir_name, file_name
             )
         });
-    let start = bytes.iter().position(|&x| x == 0).expect("Failed to find zlib header");
 
-    let mut decoder = ZlibDecoder::new(&bytes[start..]);
+    let mut decoder = ZlibDecoder::new(&bytes[..]);
     let mut content = String::new();
-    decoder.read_to_string(&mut content).unwrap();
+    decoder.read_to_string(&mut content).expect("Failed to read zlib compressed content");
+    let content_start = content.find("\0").unwrap_or(0);
 
-    print!("{}", content);
+    print!("{}", &content.as_str()[content_start..]);
 }
