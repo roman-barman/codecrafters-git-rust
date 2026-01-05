@@ -17,7 +17,9 @@ pub(crate) fn cat_file(hash: &str) {
 
     let mut decoder = ZlibDecoder::new(&bytes[..]);
     let mut content = String::new();
-    decoder.read_to_string(&mut content).expect("Failed to read zlib compressed content");
+    decoder
+        .read_to_string(&mut content)
+        .expect("Failed to read zlib compressed content");
     let content_start = match content.find("\0") {
         Some(start) => start + 1,
         None => 0,
