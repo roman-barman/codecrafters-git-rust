@@ -1,18 +1,14 @@
+mod args;
 mod commands;
 
-use std::env;
+use crate::args::{AppArgs, Command};
+use clap::Parser;
 
 fn main() -> Result<(), anyhow::Error> {
-    eprintln!("Logs from your program will appear here!");
-
-    let args: Vec<String> = env::args().collect();
-    match args[1].as_str() {
-        "init" => commands::init()?,
-        "cat-file" => {
-            let hash = &args[3];
-            commands::cat_file(hash);
-        }
-        _ => println!("unknown command: {}", args[1]),
+    let command = AppArgs::parse().command;
+    match command {
+        Command::Init => commands::init()?,
+        Command::CatFile(args) => commands::cat_file(&args.hash),
     };
 
     Ok(())
