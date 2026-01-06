@@ -1,20 +1,19 @@
-use crate::commands::OBJECT_DIR;
+use crate::blob_storege::BlobStorage;
 use std::fs;
 
-pub(crate) fn init() -> Result<(), InitError> {
-    fs::create_dir(".git").map_err(|e| InitError::FailedToCreateDir {
+pub(crate) fn init(storage: &BlobStorage) -> Result<(), InitError> {
+    fs::create_dir(".git").map_err(|e| InitError::CreateDir {
         dir: ".git".to_string(),
         err: e,
     })?;
-    fs::create_dir(OBJECT_DIR).map_err(|e| InitError::FailedToCreateDir {
-        dir: OBJECT_DIR.to_string(),
-        err: e,
-    })?;
-    fs::create_dir(".git/refs").map_err(|e| InitError::FailedToCreateDir {
+    storage
+        .init_directory()
+        .map_err(InitError::InitBlobStorage)?;
+    fs::create_dir(".git/refs").map_err(|e| InitError::CreateDir {
         dir: ".git/refs".to_string(),
         err: e,
     })?;
-    fs::write(".git/HEAD", "ref: refs/heads/main\n").map_err(|e| InitError::FailedToWriteFile {
+    fs::write(".git/HEAD", "ref: refs/heads/main\n").map_err(|e| InitError::WriteFile {
         file: ".git/HEAD".to_string(),
         err: e,
     })?;
@@ -25,7 +24,9 @@ pub(crate) fn init() -> Result<(), InitError> {
 #[derive(Debug, thiserror::Error)]
 pub(crate) enum InitError {
     #[error("Failed to create directory {dir}: {err}")]
-    FailedToCreateDir { dir: String, err: std::io::Error },
+    CreateDir { dir: String, err: std::io::Error },
     #[error("Failed to write file {file}: {err}")]
-    FailedToWriteFile { file: String, err: std::io::Error },
+    WriteFile { file: String, err: std::io::Error },
+    #[error("Failed to initialize blob storage: {0}")]
+    InitBlobStorage(std::io::Error),
 }
