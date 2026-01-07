@@ -20,6 +20,6 @@ pub(crate) fn hash_object(
 pub(crate) enum HashObjectError {
     #[error("Failed to add object: {0}")]
     AddObject(#[from] AddBlobObjectError),
-    #[error("Failed to save objects")]
+    #[error("Failed to save objects: {0}")]
     Save(#[from] std::io::Error),
 }
