@@ -67,6 +67,11 @@ impl BlobStorage {
     pub(crate) fn save(&self) -> Result<(), io::Error> {
         for (hash, (object, _)) in &self.objects {
             let path = get_path(hash);
+            if let Some(directory_path) = path.parent()
+                && !directory_path.exists()
+            {
+                fs::create_dir_all(directory_path)?;
+            }
             let mut file = fs::File::create(path)?;
             object.write(&mut file)?;
         }
