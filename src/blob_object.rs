@@ -29,12 +29,11 @@ impl BlobObject {
 
     pub(crate) fn create<T: Read>(reader: &mut T) -> Result<BlobObject, std::io::Error> {
         let mut content = BytesMut::new();
-        let _ = reader.read(&mut content)?;
-        let hash = calculate_hash(&content);
+        let len = reader.read(&mut content)?;
+        let hash = calculate_hash(&content[..len]);
 
-        let len = content.len();
         let mut result = BytesMut::from(format!("blob {}\0", len).as_bytes());
-        result.extend_from_slice(&content);
+        result.extend_from_slice(&content[..len]);
 
         Ok(BlobObject {
             content: result.freeze(),
