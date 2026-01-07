@@ -1,4 +1,4 @@
-use crate::blob_storege::BlobStorage;
+use crate::blob_storage::BlobStorage;
 use std::fs;
 
 pub(crate) fn init(storage: &BlobStorage) -> Result<(), InitError> {

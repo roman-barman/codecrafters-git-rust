@@ -1,9 +1,12 @@
 use bytes::{Bytes, BytesMut};
 use flate2::read::ZlibDecoder;
-use std::io::Read;
+use flate2::write::ZlibEncoder;
+use sha1::Digest;
+use std::io::{Read, Write};
 
 pub(crate) struct BlobObject {
     content: Bytes,
+    hash: Option<String>,
 }
 
 impl BlobObject {
@@ -20,6 +23,22 @@ impl BlobObject {
 
         Ok(BlobObject {
             content: content.freeze(),
+            hash: None,
+        })
+    }
+
+    pub(crate) fn create<T: Read>(reader: &mut T) -> Result<BlobObject, std::io::Error> {
+        let mut content = BytesMut::new();
+        let _ = reader.read(&mut content)?;
+        let hash = calculate_hash(&content);
+
+        let len = content.len();
+        let mut result = BytesMut::from(format!("blob {}\0", len).as_bytes());
+        result.extend_from_slice(&content);
+
+        Ok(BlobObject {
+            content: result.freeze(),
+            hash: Some(hash),
         })
     }
 
@@ -30,6 +49,25 @@ impl BlobObject {
         };
         &self.content[start_content..]
     }
+
+    pub(crate) fn hash(&mut self) -> Option<&str> {
+        if self.hash.is_none() {
+            self.hash = Some(calculate_hash(&self.content));
+        }
+        self.hash.as_deref()
+    }
+
+    pub(crate) fn write<T: Write>(&self, writer: &mut T) -> std::io::Result<()> {
+        let mut encoder = ZlibEncoder::new(writer, flate2::Compression::default());
+        encoder.write_all(&self.content)?;
+        encoder.finish()?;
+        Ok(())
+    }
+}
+
+fn calculate_hash(content: &[u8]) -> String {
+    let hash = sha1::Sha1::digest(content);
+    hex::encode(hash)
 }
 
 #[derive(Debug, thiserror::Error)]
