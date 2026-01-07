@@ -32,6 +32,8 @@ impl BlobObject {
         let len = reader.read(&mut content)?;
         let hash = calculate_hash(&content[..len]);
 
+        println!("Decompressed blob with length {}", len);
+
         let mut result = BytesMut::from(format!("blob {}\0", len).as_bytes());
         result.extend_from_slice(&content[..len]);
 

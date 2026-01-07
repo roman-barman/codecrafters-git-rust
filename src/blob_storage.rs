@@ -48,6 +48,7 @@ impl BlobStorage {
             return Err(AddBlobObjectError::FileNotFound);
         }
 
+        println!("Adding {}", path.display());
         let file = fs::File::open(path).map_err(AddBlobObjectError::OpenFile)?;
         let mut reader = io::BufReader::new(file);
         let mut object =
