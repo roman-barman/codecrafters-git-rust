@@ -1,10 +1,9 @@
 mod args;
-mod blob_object;
-mod blob_storage;
+mod blob;
 mod commands;
 
 use crate::args::{AppArgs, Command};
-use crate::blob_storage::BlobStorage;
+use crate::blob::BlobStorage;
 use clap::Parser;
 
 fn main() {

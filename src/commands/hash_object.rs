@@ -1,4 +1,4 @@
-use crate::blob_storage::{AddBlobObjectError, BlobStorage};
+use crate::blob::{AddBlobObjectError, BlobStorage};
 use std::path::Path;
 
 pub(crate) fn hash_object(

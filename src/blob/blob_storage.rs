@@ -1,4 +1,4 @@
-use crate::blob_object::{BlobObject, BlobObjectReadError};
+use crate::blob::blob_object::{BlobObject, BlobObjectReadError};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::{fs, io};
