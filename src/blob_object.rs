@@ -42,10 +42,11 @@ impl BlobObject {
     }
 
     pub(crate) fn content(&self) -> &[u8] {
-        let start_content = match self.content.iter().position(|b| *b != 0) {
+        let start_content = match self.content.iter().position(|b| *b == 0) {
             Some(pos) => pos + 1,
             None => return &self.content,
         };
+
         &self.content[start_content..]
     }
 
