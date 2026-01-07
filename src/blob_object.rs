@@ -11,18 +11,18 @@ pub(crate) struct BlobObject {
 
 impl BlobObject {
     pub(crate) fn read<T: Read>(reader: &mut T) -> Result<BlobObject, BlobObjectReadError> {
-        let mut compressed_content = BytesMut::new();
-        reader
-            .read(&mut compressed_content)
+        let mut compressed_content = vec![];
+        let _ = reader
+            .read_to_end(&mut compressed_content)
             .map_err(BlobObjectReadError::FailedToRead)?;
         let mut decoder = ZlibDecoder::new(&compressed_content[..]);
-        let mut content = BytesMut::with_capacity(compressed_content.len());
-        decoder
-            .read(&mut content)
+        let mut content = Vec::with_capacity(compressed_content.len());
+        let _ = decoder
+            .read_to_end(&mut content)
             .map_err(BlobObjectReadError::FailedToDecompress)?;
 
         Ok(BlobObject {
-            content: content.freeze(),
+            content: Bytes::from(content),
             hash: None,
         })
     }
